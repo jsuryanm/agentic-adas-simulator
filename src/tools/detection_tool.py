@@ -6,6 +6,7 @@ from src.models.schemas import DetectedObject
 from src.exceptions.custom_exceptions import DetectionToolException,ImageLoadException
 
 import cv2 
+import os
 from ultralytics import YOLO 
 
 class DetectionTool:
@@ -163,23 +164,19 @@ class DetectionTool:
                 vehicle = vehicles[best_match]
 
                 # Union bounding box
-                union_bbox = [
-                    min(person.bbox[0], vehicle.bbox[0]),
-                    min(person.bbox[1], vehicle.bbox[1]),
-                    max(person.bbox[2], vehicle.bbox[2]),
-                    max(person.bbox[3], vehicle.bbox[3]),
-                ]
+                union_bbox = [min(person.bbox[0], vehicle.bbox[0]),
+                              min(person.bbox[1], vehicle.bbox[1]),
+                              max(person.bbox[2], vehicle.bbox[2]),
+                              max(person.bbox[3], vehicle.bbox[3])]
 
                 label = "rider" if vehicle.label == "motorcycle" else "cyclist"
                 confidence = max(person.confidence, vehicle.confidence)
 
-                merged_obj = DetectedObject(
-                    label=label,
-                    confidence=round(confidence, 3),
-                    position=self._get_horizontal_position(union_bbox[0], union_bbox[2], img_width),
-                    distance=self._get_distance_estimate(union_bbox[1], union_bbox[3], img_height),
-                    bbox=union_bbox,
-                )
+                merged_obj = DetectedObject(label=label,
+                                            confidence=round(confidence, 3),
+                                            position=self._get_horizontal_position(union_bbox[0], union_bbox[2], img_width),
+                                            distance=self._get_distance_estimate(union_bbox[1], union_bbox[3], img_height),
+                                            bbox=union_bbox,)
 
                 merged.append(merged_obj)
                 consumed_persons.add(p_idx)
@@ -210,10 +207,7 @@ class DetectionTool:
             aspect_ratio = bbox_height / bbox_width
 
             # Infer missed riders — tall narrow shapes at mid/far distance
-            if (
-                aspect_ratio > 1.3
-                and person.distance in ["far", "mid"]
-            ):
+            if aspect_ratio > 1.3 and person.distance in ["far", "mid"]:
                 person.label = "rider"
                 filtered.append(person)
                 continue
@@ -256,7 +250,10 @@ class DetectionTool:
 
 if __name__ == "__main__":
     tool = DetectionTool()
-    img_path = "test.jpg"
+
+    BASE_DIR = os.path.dirname(__file__)
+    img_path = os.path.join(BASE_DIR,"images","test.jpg")
+    
     detected, dims = tool.detect(img_path)
     print(dims)
     for obj in detected:
@@ -282,23 +279,18 @@ if __name__ == "__main__":
         else:
             color = (255,255,255)
 
-        cv2.rectangle(
-            frame,
-            (x1,y1),
-            (x2,y2),
-            color,
-            2
-        )
+        cv2.rectangle(frame,
+                      (x1,y1),
+                      (x2,y2),
+                      color,2)
 
-        cv2.putText(
-            frame,
-            f"{obj.label} {obj.confidence}",
-            (x1,y1-5),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
-            color,
-            2
-        )
+        cv2.putText(frame,
+                    f"{obj.label} {obj.confidence}",
+                    (x1,y1-5),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.5,
+                    color,
+                    2)
 
     cv2.imshow("Filtered Detection",frame)
     cv2.waitKey(0)
