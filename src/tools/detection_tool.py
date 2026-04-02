@@ -83,9 +83,10 @@ class DetectionTool:
                                  x2: float,
                                  img_width: int) -> str:
         x_center = (x1 + x2) / 2 
-        ratio =  x_center / img_width
-
-        if ratio < 0.33:
+        ratio =  x_center / img_width # normalization step
+        #  we will the img into 3 regions [0    -   0.33    -   0.67    -   1
+                                        # (left-range[0-0.33])    (center)    (right range[0.67-1.0])]
+        if ratio < 0.33: 
             return "left"
         
         elif ratio > 0.67:
@@ -97,8 +98,9 @@ class DetectionTool:
                                y1: float,
                                y2: float,
                                img_height: int) -> str:
-
+        """Estimate object distance using bounding box size"""
         bbox_height_ratio =  (y2 - y1) / img_height
+        # closer objects appear bigger
 
         if bbox_height_ratio > settings.NEAR_DISTANCE_THRESHOLD:
             return "near"
@@ -108,13 +110,18 @@ class DetectionTool:
         
         return "far"
     
-    def _filter_detections(
-        self,
-        detections: List[DetectedObject],
-        img_width: int,
-        img_height: int,
-    ) -> List[DetectedObject]:
-
+    def _filter_detections(self,
+                           detections: List[DetectedObject],
+                           img_width: int,
+                           img_height: int) -> List[DetectedObject]:
+        """
+        Fixes YOLO mistakes using reasoning
+        Main tasks:
+        1. Supress false persons
+        2. Merge rider detections
+        3. Relabel pedestrians 
+        4. Infer missed riders
+        """
         persons = [d for d in detections if d.label == "person"]
         vehicles = [d for d in detections if d.label != "person"]
 
@@ -220,6 +227,8 @@ class DetectionTool:
         return filtered
     
     def _calculate_iou(self,box1,box2):
+
+        # Find the overlap rectangle 
         x1 = max(box1[0],box2[0])
         y1 = max(box1[1],box2[1])
         x2 = min(box1[2],box2[2])
@@ -238,6 +247,7 @@ class DetectionTool:
         return intersection / union
     
     def _center_inside(self,box1,box2):
+        """Detect containment even when IoU is small"""
         cx = (box1[0] + box1[2]) / 2
         cy = (box1[1] + box1[3]) / 2
 
@@ -246,7 +256,7 @@ class DetectionTool:
 
 if __name__ == "__main__":
     tool = DetectionTool()
-    img_path = r"C:\Users\rsurs\OneDrive\Documents\agentic-adas\tests\images\test.jpg"
+    img_path = "test.jpg"
     detected, dims = tool.detect(img_path)
     print(dims)
     for obj in detected:
