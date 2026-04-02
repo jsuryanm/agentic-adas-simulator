@@ -1,0 +1,17 @@
+langgraph 
+langchain
+langchain-openai
+openai 
+fastapi
+uvicorn[standard]
+ultralytics
+mcp[cli]
+python-multipart 
+pydantic-settings 
+pydantic 
+loguru
+opencv-python
+python-dotenv
+pytest
+torch 
+torchvision
