@@ -27,6 +27,8 @@ class Config(BaseSettings):
     LANE_DEVICE: str = Field(default="cuda" if torch.cuda.is_available() else "cpu")
     LANE_DRIFT_THRESHOLD: float = 0.3 # lateral offset above this drifting
 
+    LANE_MODEL_PATH: str = "lane_model/ufldv2_culane_res18_320x1600.onnx"
+
 
     LOG_LEVEL: str = "INFO"
     LOG_FILE: str = "adas.log"
