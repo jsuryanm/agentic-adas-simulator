@@ -171,96 +171,96 @@ class DepthTool:
             return "mid"
         return "far"
     
-if __name__ == "__main__":
+# if __name__ == "__main__":
 
-    BASE_DIR = os.path.dirname(__file__)
-    img_path = os.path.join(BASE_DIR,"images","test.jpg")
+#     BASE_DIR = os.path.dirname(__file__)
+#     img_path = os.path.join(BASE_DIR,"images","test.jpg")
 
-    depth_tool = DepthTool()
-    detection_tool = DetectionTool()
+#     depth_tool = DepthTool()
+#     detection_tool = DetectionTool()
 
-    # Run detection
-    detected, dims = detection_tool.detect(img_path)
+#     # Run detection
+#     detected, dims = detection_tool.detect(img_path)
 
-    # Compute depth
-    depth_map = depth_tool.estimate(img_path)
+#     # Compute depth
+#     depth_map = depth_tool.estimate(img_path)
 
-    # Convert DetectedObject -> dict (LangGraph rule compliance)
-    detected_dicts = [obj.model_dump() for obj in detected]
+#     # Convert DetectedObject -> dict (LangGraph rule compliance)
+#     detected_dicts = [obj.model_dump() for obj in detected]
 
-    # Enrich with depth
-    enriched = depth_tool.enrich_detections(detected_dicts,
-                                            depth_map,
-                                            dims)
+#     # Enrich with depth
+#     enriched = depth_tool.enrich_detections(detected_dicts,
+#                                             depth_map,
+#                                             dims)
 
-    # Load image for drawing
-    frame = cv2.imread(img_path)
+#     # Load image for drawing
+#     frame = cv2.imread(img_path)
 
-    # Create depth visualization
-    depth_vis = (depth_map * 255).astype("uint8")
-    depth_vis = cv2.applyColorMap(depth_vis, cv2.COLORMAP_PLASMA)
+#     # Create depth visualization
+#     depth_vis = (depth_map * 255).astype("uint8")
+#     depth_vis = cv2.applyColorMap(depth_vis, cv2.COLORMAP_PLASMA)
 
-    # Ensure same size
-    depth_vis = cv2.resize(depth_vis,
-                           (frame.shape[1], frame.shape[0]))
+#     # Ensure same size
+#     depth_vis = cv2.resize(depth_vis,
+#                            (frame.shape[1], frame.shape[0]))
 
-    # Draw detections
-    for obj in enriched:
+#     # Draw detections
+#     for obj in enriched:
 
-        x1,y1,x2,y2 = map(int,obj["bbox"])
+#         x1,y1,x2,y2 = map(int,obj["bbox"])
 
-        if obj["distance"] == "near":
-            color = (0,0,255)
+#         if obj["distance"] == "near":
+#             color = (0,0,255)
 
-        elif obj["distance"] == "mid":
-            color = (0,165,255)
+#         elif obj["distance"] == "mid":
+#             color = (0,165,255)
 
-        else:
-            color = (0,255,0)
+#         else:
+#             color = (0,255,0)
 
-        label = f'{obj["label"]} {obj["distance"]} ({obj["depth_value"]:.2f})'
+#         label = f'{obj["label"]} {obj["distance"]} ({obj["depth_value"]:.2f})'
 
-        cv2.rectangle(frame,
-                      (x1,y1),
-                      (x2,y2),
-                      color,
-                      2)
+#         cv2.rectangle(frame,
+#                       (x1,y1),
+#                       (x2,y2),
+#                       color,
+#                       2)
 
-        cv2.putText(frame,
-                    label,
-                    (x1,y1-8),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    color,
-                    2)
+#         cv2.putText(frame,
+#                     label,
+#                     (x1,y1-8),
+#                     cv2.FONT_HERSHEY_SIMPLEX,
+#                     0.5,
+#                     color,
+#                     2)
 
-        # Draw depth sampling point (debug)
-        cx = int((x1+x2)/2)
-        cy = int((y1+y2)/2)
+#         # Draw depth sampling point (debug)
+#         cx = int((x1+x2)/2)
+#         cy = int((y1+y2)/2)
 
-        cv2.circle(frame,
-                   (cx,cy),
-                   4,
-                   (255,255,0),
-                   -1)
+#         cv2.circle(frame,
+#                    (cx,cy),
+#                    4,
+#                    (255,255,0),
+#                    -1)
 
-    # Create overlay
-    overlay = cv2.addWeighted(frame,
-                              0.7,
-                              depth_vis,
-                              0.3,
-                              0)
+#     # Create overlay
+#     overlay = cv2.addWeighted(frame,
+#                               0.7,
+#                               depth_vis,
+#                               0.3,
+#                               0)
 
-    # Create resizable windows
-    cv2.namedWindow("ADAS Detections",cv2.WINDOW_NORMAL)
-    cv2.namedWindow("Depth Map",cv2.WINDOW_NORMAL)
-    cv2.namedWindow("Depth Overlay",cv2.WINDOW_NORMAL)
+#     # Create resizable windows
+#     cv2.namedWindow("ADAS Detections",cv2.WINDOW_NORMAL)
+#     cv2.namedWindow("Depth Map",cv2.WINDOW_NORMAL)
+#     cv2.namedWindow("Depth Overlay",cv2.WINDOW_NORMAL)
 
-    # Show windows
-    cv2.imshow("ADAS Detections",frame)
-    cv2.imshow("Depth Map",depth_vis)
-    cv2.imshow("Depth Overlay",overlay)
+#     # Show windows
+#     cv2.imshow("ADAS Detections",frame)
+#     cv2.imshow("Depth Map",depth_vis)
+#     cv2.imshow("Depth Overlay",overlay)
 
-    cv2.waitKey(0)
+#     cv2.waitKey(0)
 
-    cv2.destroyAllWindows()
+#     cv2.destroyAllWindows()

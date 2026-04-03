@@ -23,21 +23,9 @@ class Config(BaseSettings):
 
     # Lane Detection 
     LANE_ENABLED: bool = True 
-    LANE_MODEL_PATH: str = "models/ufld_v2_culane_res18.onnx"
-
-    # Model architecture constants (CULane ResNet-18 defaults)
-    LANE_INPUT_HEIGHT: int = 320
-    LANE_INPUT_WIDTH: int = 1600
-    LANE_NUM_LANES: int = 4
-    LANE_NUM_ROW_ANCHORS: int = 18
-    LANE_NUM_GRIDDING: int = 200
-    LANE_ROW_ANCHOR_START: int = 121
-    LANE_ROW_ANCHOR_END: int = 301
- 
-    # Confidence thresholds
-    LANE_EXISTENCE_THRESHOLD: float = 0.5
-    LANE_POINT_THRESHOLD: float = 0.5
-    LANE_MIN_POINTS: int = 4
+    LANE_MODEL: str = "nvidia/segformer-b0-finetuned-cityscapes-1024-1024"
+    LANE_DEVICE: str = Field(default="cuda" if torch.cuda.is_available() else "cpu")
+    LANE_DRIFT_THRESHOLD: float = 0.3 # lateral offset above this drifting
 
 
     LOG_LEVEL: str = "INFO"

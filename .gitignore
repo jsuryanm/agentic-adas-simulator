@@ -218,3 +218,6 @@ __marimo__/
 .claude
 docs 
 *.pt
+*.onxx
+
+lane_detect_model

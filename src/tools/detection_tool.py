@@ -249,50 +249,50 @@ class DetectionTool:
         return (box2[0] <= cx <= box2[2] and  box2[1] <= cy <= box2[3])
     
 
-if __name__ == "__main__":
-    tool = DetectionTool()
+# if __name__ == "__main__":
+#     tool = DetectionTool()
 
-    BASE_DIR = os.path.dirname(__file__)
-    img_path = os.path.join(BASE_DIR,"images","test.jpg")
+#     BASE_DIR = os.path.dirname(__file__)
+#     img_path = os.path.join(BASE_DIR,"images","test.jpg")
     
-    detected, dims = tool.detect(img_path)
-    logger.info(dims)
+#     detected, dims = tool.detect(img_path)
+#     logger.info(dims)
 
-    for obj in detected:
-        logger.info(obj.model_dump())
+#     for obj in detected:
+#         logger.info(obj.model_dump())
 
-    frame = cv2.imread(img_path)
-    for obj in detected:
+#     frame = cv2.imread(img_path)
+#     for obj in detected:
 
-        x1,y1,x2,y2 = map(int,obj.bbox)
+#         x1,y1,x2,y2 = map(int,obj.bbox)
 
-        if obj.label == "rider":
-            color = (0,255,255)
+#         if obj.label == "rider":
+#             color = (0,255,255)
 
-        elif obj.label == "cyclist":
-            color = (255,165,0)
+#         elif obj.label == "cyclist":
+#             color = (255,165,0)
 
-        elif obj.label == "motorcycle":
-            color = (0,200,200)
+#         elif obj.label == "motorcycle":
+#             color = (0,200,200)
 
-        elif obj.label == "pedestrian":
-            color = (255,0,0)
+#         elif obj.label == "pedestrian":
+#             color = (255,0,0)
 
-        else:
-            color = (255,255,255)
+#         else:
+#             color = (255,255,255)
 
-        cv2.rectangle(frame,
-                      (x1,y1),
-                      (x2,y2),
-                      color,2)
+#         cv2.rectangle(frame,
+#                       (x1,y1),
+#                       (x2,y2),
+#                       color,2)
 
-        cv2.putText(frame,
-                    f"{obj.label} {obj.confidence}",
-                    (x1,y1-5),
-                    cv2.FONT_HERSHEY_SIMPLEX,
-                    0.5,
-                    color,
-                    2)
+#         cv2.putText(frame,
+#                     f"{obj.label} {obj.confidence}",
+#                     (x1,y1-5),
+#                     cv2.FONT_HERSHEY_SIMPLEX,
+#                     0.5,
+#                     color,
+#                     2)
 
-    cv2.imshow("Filtered Detection",frame)
-    cv2.waitKey(0)
+#     cv2.imshow("Filtered Detection",frame)
+#     cv2.waitKey(0)
