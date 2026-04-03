@@ -12,7 +12,7 @@ class SceneTool:
                       "rider",
                       "cyclist"}
     
-    PEDESTRIAN_LABELS = {"pedestrian"}
+    PEDESTRIAN_LABELS = {"pedestrian","persons"}
 
     def __init__(self):
         self.logger = logger.bind(tool="SceneTool")
@@ -55,4 +55,4 @@ class SceneTool:
                             objects: List[dict],
                             notes: List[str]) -> Tuple[bool,str]:
         """Find the closest center vehicle"""
-        
+        pass
