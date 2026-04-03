@@ -28,6 +28,12 @@ class DetectedObject(BaseModel):
     distance: str 
     bbox: List[float]
 
+
+class LaneStatus(str,Enum):
+    CENTERED = "centered"
+    DRIFTING_LEFT = "drifting_left"
+    DRIFTING_RIGHT = "drifting_right"
+
 class SceneSummary(BaseModel):
     lead_vehicle_present: bool
     lead_vehicle_distance: str
@@ -36,7 +42,7 @@ class SceneSummary(BaseModel):
     pedestrian_near_path: bool 
 
     traffic_density: str 
-    lane_status: str 
+    lane_status: LaneStatus
     context_notes: List[str] = Field(default_factory=list)
     llm_narration: str = ""
 
