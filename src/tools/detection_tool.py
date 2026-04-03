@@ -57,12 +57,13 @@ class DetectionTool:
 
         for result in results:
             for box in result.boxes:
-                class_id = int(box.cls[0])
+                class_id = int(box.cls.item()) 
+                # note all outputs of boxes are pytorch tensors use item()
 
                 if class_id not in self.RELEVANT_CLASSES:
                     continue 
 
-                x1,y1,x2,y2 = box.xyxy[0].tolist()
+                x1,y1,x2,y2 = box.xyxy.squeeze().tolist()
                 confidence = float(box.conf.item())
                 label = self.RELEVANT_CLASSES[class_id]
 
@@ -85,7 +86,7 @@ class DetectionTool:
                                  img_width: int) -> str:
         x_center = (x1 + x2) / 2 
         ratio =  x_center / img_width # normalization step
-        #  we will the img into 3 regions [0    -   0.33    -   0.67    -   1
+        #  we will divide the img into 3 regions [0    -   0.33    -   0.67    -   1
                                         # (left-range[0-0.33])    (center)    (right range[0.67-1.0])]
         if ratio < 0.33: 
             return "left"
@@ -146,12 +147,13 @@ class DetectionTool:
                     continue
 
                 # Person overlaps a large vehicle -> suppress person only
+                # This means we will only detect the car removing person
                 if vehicle.label in ["car", "bus", "truck"]:
                     match_type = "suppress"
                     best_match = v_idx
                     break
 
-                # Person overlaps motorcycle/bicycle -> merge
+                # Person overlaps motorcycle/bicycle -> merge (person + motorcycle)
                 if vehicle.label in ["motorcycle", "bicycle"] and iou > best_iou:
                     best_iou = iou
                     best_match = v_idx
@@ -221,7 +223,6 @@ class DetectionTool:
         return filtered
     
     def _calculate_iou(self,box1,box2):
-
         # Find the overlap rectangle 
         x1 = max(box1[0],box2[0])
         y1 = max(box1[1],box2[1])
@@ -255,9 +256,10 @@ if __name__ == "__main__":
     img_path = os.path.join(BASE_DIR,"images","test.jpg")
     
     detected, dims = tool.detect(img_path)
-    print(dims)
+    logger.info(dims)
+
     for obj in detected:
-        print(obj.model_dump())
+        logger.info(obj.model_dump())
 
     frame = cv2.imread(img_path)
     for obj in detected:

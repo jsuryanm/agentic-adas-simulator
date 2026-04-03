@@ -7,7 +7,7 @@ def setup_logger():
 
     logger.add(sys.stdout,
                level=settings.LOG_LEVEL,
-               format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}")
+               format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {file}:{line} | {function} | {message}")
 
 logger.add(settings.LOG_FILE,
            rotation="10 MB",

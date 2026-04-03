@@ -13,3 +13,5 @@ class SceneTool:
                       "cyclist"}
     
     PEDESTRIAN_LABELS = {"pedestrian"}
+
+    
