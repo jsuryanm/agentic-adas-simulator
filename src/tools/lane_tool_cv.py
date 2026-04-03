@@ -1,15 +1,3 @@
-# tools/lane_tool_cv.py
-# Classical lane detection using OpenCV (Canny + Hough Lines).
-#
-# No model download, no ONNX, no transformers — pure computer vision.
-# Detects lane *lines* (not road surface), so it can distinguish
-# the ego lane from adjacent lanes, solving the multi-lane problem
-# that SegFormer has.
-#
-# Pipeline:
-#   image → grayscale → blur → Canny edges → ROI mask
-#   → Hough lines → separate left/right → fit lines → lateral offset
-
 import os
 from typing import Optional, Tuple, List
 
@@ -32,17 +20,17 @@ class LaneToolCV:
 
     def __init__(self):
         # Canny thresholds
-        self.canny_low = 50
-        self.canny_high = 150
+        self.canny_low = settings.LANE_CANNY_LOW
+        self.canny_high = settings.LANE_CANNY_HIGH
 
         # Hough line parameters
-        self.hough_threshold = 30
-        self.min_line_length = 40
-        self.max_line_gap = 150
+        self.hough_threshold = settings.LANE_HOUGH_THRESHOLD
+        self.min_line_length = settings.LANE_MIN_LINE_LENGTH
+        self.max_line_gap = settings.LANE_MAX_LINE_GAP
 
         # Slope filters (reject near-horizontal lines)
-        self.min_slope = 0.4
-        self.max_slope = 3.0
+        self.min_slope = settings.LANE_MIN_SLOPE
+        self.max_slope = settings.LANE_MAX_SLOPE
 
     def detect_lanes(self, image_path: str) -> LaneAnalysis:
         """

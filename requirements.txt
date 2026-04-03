@@ -18,4 +18,3 @@ torchvision
 transformers
 huggingface_hub[hf_xet]
 numpy
-onnxruntime-gpu
