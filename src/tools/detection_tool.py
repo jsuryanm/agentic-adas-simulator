@@ -40,7 +40,7 @@ class DetectionTool:
         if frame is None:
             raise ImageLoadException(f"Failed to load image: {image_path}")
         
-        img_height,img_width = frame.shape[:2]
+        img_height,img_width = frame.shape[:2]        
         logger.info(f"Running object detection on {image_path} with shape:({img_height},{img_width})")
 
         self.load_model()

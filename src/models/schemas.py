@@ -1,6 +1,6 @@
 from pydantic import BaseModel,Field 
 from enum import Enum 
-from typing import List 
+from typing import List,Optional
 
 class RiskLevel(str,Enum):
     LOW = "low" 
@@ -28,11 +28,26 @@ class DetectedObject(BaseModel):
     distance: str 
     bbox: List[float]
 
-
 class LaneStatus(str,Enum):
     CENTERED = "centered"
     DRIFTING_LEFT = "drifting_left"
     DRIFTING_RIGHT = "drifting_right"
+
+class LanePoint(BaseModel):
+    x: float 
+    y: float 
+
+class LaneLine(BaseModel):
+    lane_id: int 
+    points: List[LanePoint]
+    confidence: float = Field(ge=0,le=1)
+
+class LaneAnalysis(BaseModel):
+    lanes: List[LaneLine]
+    ego_left_lane_id: Optional[int] = None 
+    ego_right_lane_id: Optional[int] = None 
+    lateral_offset: float = Field(ge=-1,le=1)
+    lane_width_px: Optional[float] = None 
 
 class SceneSummary(BaseModel):
     lead_vehicle_present: bool

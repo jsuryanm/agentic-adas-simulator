@@ -16,6 +16,7 @@ class ADASState(TypedDict):
     scene_summary: Optional[dict]
     risk_report: Optional[dict]
     decision: Optional[dict]
+    lane_analysis: Optional[dict]
 
     # metadata 
     errors: Annotated[List[str],add]
@@ -30,5 +31,6 @@ def initial_state(image_path: str, frame_number: int = 0) -> ADASState:
                      scene_summary=None,
                      risk_report=[],
                      decision=None,
+                     lane_analysis=None,
                      errors=[],
                      processing_time={})

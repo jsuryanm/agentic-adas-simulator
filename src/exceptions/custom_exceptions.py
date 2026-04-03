@@ -26,6 +26,14 @@ class LLMToolException(ADASBaseException):
     """Raised when the LLM tool fails (API error, timeout, bad response, etc.)"""
     pass
 
+class DepthToolException(ADASBaseException):
+    """Raised when depth estimation fails (model load, inference, etc.)"""
+    pass
+ 
+class LaneToolException(ADASBaseException):
+    """Raised when lane detection fails (ONNX load, inference, decode, etc.)"""
+    pass
+
 
 # Agent Exceptions
 

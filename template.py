@@ -29,6 +29,8 @@ list_of_files = [
     "src/tools/llm_tool.py",
     "src/tools/risk_tool.py",
     "src/tools/scene_tool.py",
+    "src/tools/depth_tool.py",
+    "src/tools/lane_tool.py",
     "src/exceptions/__init__.py",
     "src/exceptions/custom_exceptions.py",
     "src/logger/__init__.py",
