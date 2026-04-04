@@ -287,7 +287,7 @@ if __name__ == "__main__":
 
     # Run analysis
     analysis = tool.detect_lanes(img_path)
-    print("\n===== LANE ANALYSIS (OpenCV) =====")
+    print("\n===== LANE ANALYSIS =====")
     print("Lateral offset:", analysis.lateral_offset)
     print("Lane width:", analysis.lane_width_px)
     print("Road coverage:", analysis.road_coverage)
