@@ -1,6 +1,8 @@
 from src.models.schemas import RiskReport,RiskLevel,LaneStatus
 from src.exceptions.custom_exceptions import RiskToolException
 from loguru import logger 
+from pprint import pprint
+
 
 class RiskTool:
     
@@ -145,3 +147,26 @@ class RiskTool:
 
         parts.append(f"Composite risk level: {composite.value}.")
         return " ".join(parts)
+
+# if __name__ == "__main__":
+#     risk_tool = RiskTool()
+
+#     # Simulated SceneSummary output
+#     scene_summary = {
+#         "lead_vehicle_present":True,
+#         "lead_vehicle_distance":"near",
+#         "pedestrian_present":True,
+#         "pedestrian_near_path":True,
+#         "traffic_density":"moderate",
+#         "lane_status":"drifting_right",
+#         "context_notes":[
+#             "Lead car very close",
+#             "Pedestrian in path"
+#         ]
+#     }
+
+#     report = risk_tool.assess(scene_summary)
+
+#     print("\n===== RISK REPORT =====")
+
+#     pprint(report.model_dump())

@@ -1,5 +1,6 @@
 import json 
 from loguru import logger 
+from pprint import pprint
 
 from langchain_openai import ChatOpenAI
 from langchain_core.prompts import ChatPromptTemplate
@@ -366,3 +367,80 @@ class LLMTool:
             }
 
 
+# if __name__ == "__main__":
+
+#     llm_tool = LLMTool()
+
+#     scene_summary = {
+#         "lead_vehicle_present":True,
+#         "lead_vehicle_distance":"mid",
+#         "pedestrian_present":True,
+#         "pedestrian_near_path":False,
+#         "traffic_density":"light",
+#         "lane_status":"centered",
+#         "context_notes":[]
+#     }
+
+#     detected_objects = [
+#         {
+#             "label":"car",
+#             "position":"center",
+#             "distance":"mid"
+#         },
+#         {
+#             "label":"pedestrian",
+#             "position":"left",
+#             "distance":"near"
+#         }
+#     ]
+
+#     lane_analysis = {
+#         "lateral_offset":0.05,
+#         "road_detected":True
+#     }
+
+#     print("\n===== SCENE REASONING =====")
+
+#     scene_reasoning = llm_tool.reason_scene(
+#         scene_summary,
+#         detected_objects,
+#         lane_analysis
+#     )
+
+#     pprint(scene_reasoning)
+
+#     risk_report = {
+#         "collision_risk":"medium",
+#         "pedestrian_risk":"medium",
+#         "lane_risk":"low",
+#         "composite_risk":"medium",
+#         "primary_driver":"collision_risk",
+#         "explanation":"baseline"
+#     }
+
+#     print("\n===== RISK VALIDATION =====")
+
+#     validated = llm_tool.validate_risk(
+#         risk_report,
+#         scene_summary,
+#         detected_objects
+#     )
+
+#     pprint(validated)
+
+#     baseline_decision = {
+#         "decision_type":"WARNING",
+#         "recommendation":"Reduce speed",
+#         "explanation":"High risk detected"
+#     }
+
+#     print("\n===== DECISION REASONING =====")
+
+#     decision = llm_tool.reason_decision(
+#         baseline_decision,
+#         risk_report,
+#         scene_summary,
+#         detected_objects
+#     )
+
+#     pprint(decision)

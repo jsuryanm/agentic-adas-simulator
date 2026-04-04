@@ -1,5 +1,6 @@
 from typing import List,Optional 
 from loguru import logger 
+from pprint import pprint
 
 from src.models.schemas import SceneSummary,LaneAnalysis,LaneStatus
 from src.exceptions.custom_exceptions import SceneToolException
@@ -31,7 +32,7 @@ class SceneTool:
         
             lead = self._find_lead_vehicle(vehicles)
             lead_vehicle_present = lead is not None
-            lead_vehicle_distance = lead["distance"] if lead else "none"
+            lead_vehicle_distance = lead.get("distance","far") if lead else "far"
 
             pedestrian_present = len(pedestrians) > 0 
             
@@ -47,7 +48,7 @@ class SceneTool:
                                               lane_analysis)
             
             summary = SceneSummary(lead_vehicle_present=lead_vehicle_present,
-                                   lead_vehicle_distance=lead_vehicle_present,
+                                   lead_vehicle_distance=lead_vehicle_distance,
                                    pedestrian_present=pedestrian_present,
                                    pedestrian_near_path=pedestrian_near_path,
                                    traffic_density=traffic_density,
@@ -143,3 +144,49 @@ class SceneTool:
             notes.append("No unusual conditions detected")
 
         return notes
+    
+# if __name__ == "__main__":
+
+#     scene_tool = SceneTool()
+
+#     # Simulated detections (normally from DetectionTool)
+#     detected_objects = [
+#         {
+#             "label":"car",
+#             "confidence":0.91,
+#             "position":"center",
+#             "distance":"near",
+#             "bbox":[100,200,300,400]
+#         },
+#         {
+#             "label":"pedestrian",
+#             "confidence":0.88,
+#             "position":"center",
+#             "distance":"mid",
+#             "bbox":[500,220,580,420]
+#         },
+#         {
+#             "label":"truck",
+#             "confidence":0.85,
+#             "position":"left",
+#             "distance":"far",
+#             "bbox":[50,100,200,300]
+#         }
+#     ]
+
+#     # Simulated lane analysis (normally from LaneTool)
+#     lane_analysis = {
+#         "lateral_offset":0.42,
+#         "lane_width_px":820,
+#         "road_coverage":1.0,
+#         "road_detected":True
+#     }
+
+#     summary = scene_tool.analyse(
+#         detected_objects,
+#         lane_analysis
+#     )
+
+#     print("\n===== SCENE SUMMARY =====")
+
+#     pprint(summary.model_dump())
