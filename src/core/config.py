@@ -21,15 +21,6 @@ class Config(BaseSettings):
     DEPTH_NEAR_THRESHOLD: float = 0.6
     DEPTH_MID_THRESHOLD: float = 0.3
 
-    # Lane Detection (SegFormer) 
-    LANE_ENABLED: bool = True 
-    LANE_MODEL: str = "nvidia/segformer-b0-finetuned-cityscapes-1024-1024"
-    LANE_DEVICE: str = Field(default="cuda" if torch.cuda.is_available() else "cpu")
-    LANE_DRIFT_THRESHOLD: float = 0.3 # lateral offset above this drifting
-
-    # Lane Detection (ufld)
-    LANE_MODEL_PATH: str = "lane_model/ufldv2_culane_res18_320x1600.onnx"
-
     # LaneTool CV 
     LANE_CANNY_LOW: int = 50
     LANE_CANNY_HIGH: int = 150

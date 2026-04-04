@@ -1,58 +1,50 @@
-from typing import List,Tuple 
-from loguru import logger
-from src.exceptions.custom_exceptions import SceneToolException
-from src.models.schemas import SceneSummary
+from typing import Optional,List
+from src.models.schemas import SceneSummary,LaneStatus
+from src.core.config import settings 
 
+from src.exceptions.custom_exceptions import SceneToolException
+from loguru import logger 
+
+VEHICLE_LABELS = {"car", "truck", "bus", "rider", "cyclist"}
+
+PEDESTRIAN_LABELS = {"pedestrian"}
 
 class SceneTool:
-    
-    VEHICLE_LABELS = {"car",
-                      "truck",
-                      "bus",
-                      "rider",
-                      "cyclist"}
-    
-    PEDESTRIAN_LABELS = {"pedestrian","persons"}
+    """Translates raw perception outputs into a semantic SceneSummary"""
 
-    def __init__(self):
-        self.logger = logger.bind(tool="SceneTool")
-
-    def analyze(self,detected_objects: List[dict]) -> SceneSummary:
+    def analyze(self,
+                detected_objects: List[dict],
+                lane_analysis: Optional[dict],
+                img_dims: Optional[dict] = None) -> SceneSummary:
         """
-        Build a SceneSummary from detection dicts
+        Build a SceneSummary from perception data.
 
         Args:
-            detected_objects: List of DetectedObject.to_dict() results.
+            detected_objects: List of DetectedObject dicts
+                              (label, confidence, position, distance, bbox, ...).
+            lane_analysis:    LaneAnalysis dict
+                              (lateral_offset, lane_width_px, road_coverage, road_detected).
+            img_dims:         {"width": int, "height": int}  (optional, for future use).
 
         Returns:
-            SceneSummary with semantic driving context.
+            SceneSummary (Pydantic model).
         """
-        try:
-            self.logger.info(f"Analysing scene with {len(detected_objects)} detections")
 
-            notes: List[str] = []
+        pass 
 
-            lead_vehicle_present,lead_vehicle_distance = self._check_lead_vehicles(detected_objects,notes)
-            pedestrian_present,pedestrian_near_path = self._check_pedestrians(detected_objects,notes)
-            traffic_density = self._estimate_traffic_density(detected_objects,notes)
-            lane_status = self._estimate_lane_status(detected_objects,notes)
+    def _find_lead_vehicle(self,objects: List[dict]) -> Optional[dict]:
+        """
+        Find the most relevant vehicle ahead (center position, closest).
 
-            summary = SceneSummary(lead_vehicle_present=lead_vehicle_present,
-                                   lead_vehicle_distance=lead_vehicle_distance,
-                                   pedestrian_present=pedestrian_present,
-                                   pedestrian_near_path=pedestrian_near_path,
-                                   traffic_density=traffic_density,
-                                   lane_status=lane_status,
-                                   context_notes=notes)
-            
-            self.logger.info(f"Scene summary built | Lead vehicle distance: {lead_vehicle_distance} | Pedestrian present: {pedestrian_present} | Traffic density: {traffic_density}")
-            return summary
+        Priority: center vehicles first, then pick the nearest one.
+        """
 
-        except Exception as e:
-            raise SceneToolException(f"Scene analysis failed: {e}")
+        centered_vehicles = [obj for obj in objects 
+                             if obj.get("label") in VEHICLE_LABELS
+                             and obj.get("position") == "center"]
         
-    def _check_lead_vehicle(self,
-                            objects: List[dict],
-                            notes: List[str]) -> Tuple[bool,str]:
-        """Find the closest center vehicle"""
-        pass
+        if not centered_vehicles:
+            return None 
+        
+        distance_order = {"near":0,"mid":1,"far":2}
+        centered_vehicles.key()
