@@ -2,6 +2,7 @@ import os
 import time
 import tempfile
 import shutil
+import subprocess
 
 import cv2
 import numpy as np
@@ -12,7 +13,7 @@ from src.pipelines.graph import run_pipeline
 from src.exceptions.custom_exceptions import ImageLoadException
 
 
-# Colour scheme for risk levels 
+# Colour scheme for risk levels
 RISK_COLOURS = {
     "low": (0, 200, 0),        # green
     "medium": (0, 200, 255),   # orange
@@ -40,7 +41,7 @@ LABEL_COLOURS = {
 }
 
 
-# Frame extraction 
+# ── Frame extraction ─────────────────────────────────────────────────────
 
 def extract_frames(video_path: str, seconds_per_sample: float = None) -> list:
     """Extract frames from a video at the configured sampling rate.
@@ -95,7 +96,7 @@ def extract_frames(video_path: str, seconds_per_sample: float = None) -> list:
     return frames
 
 
-# Video processing 
+# ── Video processing ─────────────────────────────────────────────────────
 
 def process_video(video_path: str,
                   seconds_per_sample: float = None,
@@ -140,7 +141,7 @@ def process_video(video_path: str,
     return {"frames": results, "output_video": output_path}
 
 
-#  Annotated output video 
+# ── Annotated output video ───────────────────────────────────────────────
 
 def _create_output_video(original_video_path: str,
                          results: list) -> str:
@@ -156,16 +157,19 @@ def _create_output_video(original_video_path: str,
     fps = cap.get(cv2.CAP_PROP_FPS)
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
     os.makedirs(settings.VIDEO_OUTPUT_DIR, exist_ok=True)
 
     base_name = os.path.splitext(os.path.basename(original_video_path))[0]
-    output_path = os.path.join(settings.VIDEO_OUTPUT_DIR,
-                               f"{base_name}_adas_output.mp4")
+
+    # Write to a temporary file first (mp4v codec — not browser-compatible)
+    temp_output = os.path.join(settings.VIDEO_OUTPUT_DIR,
+                               f"{base_name}_adas_temp.mp4")
+    final_output = os.path.join(settings.VIDEO_OUTPUT_DIR,
+                                f"{base_name}_adas_output.mp4")
 
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-    writer = cv2.VideoWriter(output_path, fourcc, fps, (width, height))
+    writer = cv2.VideoWriter(temp_output, fourcc, fps, (width, height))
 
     # Build a lookup: frame_number → result state
     result_lookup = {}
@@ -199,9 +203,59 @@ def _create_output_video(original_video_path: str,
     cap.release()
     writer.release()
 
-    logger.info(f"Output video saved: {output_path}")
-    return output_path
+    # Re-encode to H.264 for browser compatibility
+    final_output = _reencode_to_h264(temp_output, final_output)
 
+    logger.info(f"Output video saved: {final_output}")
+    return final_output
+
+
+def _reencode_to_h264(input_path: str, output_path: str) -> str:
+    """Re-encode an mp4v video to H.264 using ffmpeg.
+
+    Falls back to the original mp4v file if ffmpeg is not available.
+    """
+    try:
+        cmd = [
+            "ffmpeg", "-y",
+            "-i", input_path,
+            "-c:v", "libx264",
+            "-preset", "fast",
+            "-crf", "23",
+            "-pix_fmt", "yuv420p",  # required for browser playback
+            "-movflags", "+faststart",  # enables streaming before full download
+            "-an",  # no audio track
+            output_path,
+        ]
+
+        result = subprocess.run(
+            cmd,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=120,
+        )
+
+        if result.returncode == 0 and os.path.exists(output_path):
+            # Remove the temp mp4v file
+            os.remove(input_path)
+            logger.info("Video re-encoded to H.264 successfully")
+            return output_path
+        else:
+            logger.warning(f"ffmpeg failed (code {result.returncode}), "
+                           f"using mp4v fallback")
+            return input_path
+
+    except FileNotFoundError:
+        logger.warning("ffmpeg not found — output video will use mp4v codec "
+                       "(may not play in browsers)")
+        return input_path
+
+    except subprocess.TimeoutExpired:
+        logger.warning("ffmpeg timed out — using mp4v fallback")
+        return input_path
+
+
+# ── Frame annotation ─────────────────────────────────────────────────────
 
 def _annotate_frame(frame: np.ndarray, state: dict) -> np.ndarray:
     """Draw bounding boxes, risk panel, and decision on a single frame."""
@@ -292,7 +346,7 @@ def _annotate_frame(frame: np.ndarray, state: dict) -> np.ndarray:
     return annotated
 
 
-#  Single image annotation (for dashboard) 
+# ── Single image annotation (for dashboard) ──────────────────────────────
 
 def annotate_image(image_path: str, state: dict) -> np.ndarray:
     """Annotate a single image with pipeline results for display."""
