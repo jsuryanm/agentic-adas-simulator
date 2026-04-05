@@ -10,7 +10,7 @@ from src.core.config import settings
 from src.exceptions.custom_exceptions import LLMToolException
 
 class LLMTool:
-    """the """
+    """Generates a short human-readable narration of the scene."""
     def __init__(self):
         self._llm = None 
         self._scene_chain = None

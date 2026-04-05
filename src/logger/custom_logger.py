@@ -9,11 +9,11 @@ def setup_logger():
                level=settings.LOG_LEVEL,
                format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {file}:{line} | {function} | {message}")
 
-logger.add(settings.LOG_FILE,
-           rotation="10 MB",
-           retention="10 days",
-           compression="zip",
-           level=settings.LOG_LEVEL)
+    logger.add(settings.LOG_FILE,
+            rotation="10 MB",
+            retention="10 days",
+            compression="zip",
+            level=settings.LOG_LEVEL)
 
 setup_logger()
     

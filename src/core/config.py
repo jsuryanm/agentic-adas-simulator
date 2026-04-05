@@ -37,6 +37,9 @@ class Config(BaseSettings):
     # VIDEO SAMPLING 
     SECONDS_PER_SAMPLE: float = 1.0
 
+    # VIDEO OUTPUT
+    VIDEO_OUTPUT_DIR: str = "artifacts"
+
     OPENAI_API_KEY: str = Field(default="")
     OPENAI_MODEL: str = "gpt-4o-mini"
     LLM_TEMPERATURE: float = Field(default=0.2,ge=0,le=1)
