@@ -23,7 +23,6 @@ dependencies = [
     # PyTorch CUDA
     "torch",
     "torchvision",
-    "torchaudio",
     "pytest>=9.0.2",
     "transformers>=5.5.0",
     "huggingface-hub[hf-xet]>=1.8.0",
@@ -38,7 +37,6 @@ url = "https://download.pytorch.org/whl/cu128"
 [tool.uv.sources]
 torch = { index = "pytorch" }
 torchvision = { index = "pytorch" }
-torchaudio = { index = "pytorch" }
 
 [tool.setuptools.packages.find]
 where = ["."]
