@@ -8,7 +8,6 @@ import streamlit as st
 from src.core.config import settings
 from src.tools.video_tool import annotate_image
 
-# ── Page config ───────────────────────────────────────────────────────────
 
 API_URL = "http://localhost:8000"
 
@@ -18,7 +17,6 @@ st.set_page_config(
     layout="wide",
 )
 
-# ── Constants ─────────────────────────────────────────────────────────────
 
 DECISION_ORDER = {"SAFE": 0, "ADVISORY": 1, "WARNING": 2, "CRITICAL": 3}
 
@@ -37,7 +35,7 @@ DECISION_ICON = {
 }
 
 
-# ── API helpers ───────────────────────────────────────────────────────────
+#  API helpers 
 
 def check_backend() -> bool:
     try:
@@ -70,7 +68,7 @@ def api_download_video(filename: str) -> str | None:
         return tmp.name
 
 
-# ── Render helpers ────────────────────────────────────────────────────────
+# Render helpers 
 
 def render_decision(decision: dict):
     """Colored decision banner using Streamlit native callouts."""
@@ -228,7 +226,7 @@ def show_image_results(result: dict, image_path: str):
     st.caption(f"Total pipeline time: {total:.2f}s")
 
 
-# ── Sidebar ───────────────────────────────────────────────────────────────
+#  Sidebar 
 
 with st.sidebar:
     st.title("🚗 ADAS Simulator")
@@ -268,12 +266,12 @@ with st.sidebar:
     st.caption("Models: YOLOv8 · Depth Anything V2 · GPT-4o-mini")
 
 
-# ── Main area ─────────────────────────────────────────────────────────────
+#  Main area
 
 st.title("Agentic ADAS Simulator")
 st.caption("Multi-agent driving scene analysis — upload an image or video to begin.")
 
-# ── Image mode ────────────────────────────────────────────────────────────
+#  Image mode 
 
 if input_mode == "Image":
     uploaded = st.file_uploader(
@@ -314,7 +312,7 @@ if input_mode == "Image":
                 st.session_state["image_path"],
             )
 
-# ── Video mode ────────────────────────────────────────────────────────────
+# Video mode 
 
 elif input_mode == "Video":
     uploaded = st.file_uploader(
@@ -335,7 +333,7 @@ elif input_mode == "Video":
             f"·  sampling every {settings.SECONDS_PER_SAMPLE:.1f}s"
         )
 
-        if st.button("▶ Run Video Analysis", type="primary", disabled=not backend_ok,
+        if st.button("Run Video Analysis", type="primary", disabled=not backend_ok,
                      use_container_width=True):
             try:
                 with st.spinner("Processing video — this may take a while..."):

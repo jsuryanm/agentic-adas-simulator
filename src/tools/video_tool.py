@@ -41,8 +41,7 @@ LABEL_COLOURS = {
 }
 
 
-# ── Frame extraction ─────────────────────────────────────────────────────
-
+# Frame extraction 
 def extract_frames(video_path: str, seconds_per_sample: float = None) -> list:
     """Extract frames from a video at the configured sampling rate.
 
@@ -96,7 +95,7 @@ def extract_frames(video_path: str, seconds_per_sample: float = None) -> list:
     return frames
 
 
-# ── Video processing ─────────────────────────────────────────────────────
+# Video processing 
 
 def process_video(video_path: str,
                   seconds_per_sample: float = None,
@@ -141,7 +140,7 @@ def process_video(video_path: str,
     return {"frames": results, "output_video": output_path}
 
 
-# ── Annotated output video ───────────────────────────────────────────────
+#  Annotated output video 
 
 def _create_output_video(original_video_path: str,
                          results: list) -> str:
@@ -255,7 +254,7 @@ def _reencode_to_h264(input_path: str, output_path: str) -> str:
         return input_path
 
 
-# ── Frame annotation ─────────────────────────────────────────────────────
+#  Frame annotation 
 
 def _annotate_frame(frame: np.ndarray, state: dict) -> np.ndarray:
     """Draw bounding boxes, risk panel, and decision on a single frame."""
@@ -346,7 +345,7 @@ def _annotate_frame(frame: np.ndarray, state: dict) -> np.ndarray:
     return annotated
 
 
-# ── Single image annotation (for dashboard) ──────────────────────────────
+#  Single image annotation (for dashboard) 
 
 def annotate_image(image_path: str, state: dict) -> np.ndarray:
     """Annotate a single image with pipeline results for display."""
