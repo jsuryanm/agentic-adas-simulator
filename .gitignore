@@ -221,3 +221,4 @@ docs
 *.onnx
 
 lane_model
+artifacts
