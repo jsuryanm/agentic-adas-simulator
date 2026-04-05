@@ -3,7 +3,7 @@ services:
   
   backend:
     # DOCKER_USERNAME is an env_var otherwise if set it we can use or it will appear as local/adas-backend:latest
-    image: ${DOCKER_USERNAME:-local}/adas-backend:latest
+    image: ${DOCKER_USERNAME}/adas-backend:latest
 
     build:
     # this means build image from current folder 
@@ -27,11 +27,11 @@ services:
     restart: unless-stopped # auto-restart if container crashes 
 
   frontend:
-    image: ${DOCKER_USERNAME:-$local}/adas-frontend:latest
+    image: ${DOCKER_USERNAME}/adas-frontend:latest
 
     build:
       context: .
-      dockerfile: .frontend
+      dockerfile: Dockerfile.frontend
     
     ports:
       - "8501:8501"

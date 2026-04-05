@@ -8,6 +8,7 @@ logging.basicConfig(level=logging.INFO,
 
 list_of_files = [
     ".github/workflows/.gitkeep",
+    ".github/workflows/deploy.yml",
     "src/__init__.py",
     "src/agents/__init__.py",
     "src/agents/base_agent.py",
@@ -39,7 +40,6 @@ list_of_files = [
     "dashboard/__init__.py",
     "dashboard/app.py",
     "tests/__init__.py",
-    "tests/test_detection.py",
     "tests/test_pipeline.py",
     "requirements.txt",
     ".dockerignore",
