@@ -40,7 +40,12 @@ list_of_files = [
     "dashboard/app.py",
     "tests/__init__.py",
     "tests/test_detection.py",
+    "tests/test_pipeline.py",
     "requirements.txt",
+    ".dockerignore",
+    "Dockerfile.frontend",
+    "Dockerfile.backend",
+    "docker-compose.yml",
     ".env",]
 
 
