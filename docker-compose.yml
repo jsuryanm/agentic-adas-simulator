@@ -1,0 +1,44 @@
+services:
+# services are containers
+  
+  backend:
+    # DOCKER_USERNAME is an env_var otherwise if set it we can use or it will appear as local/adas-backend:latest
+    image: ${DOCKER_USERNAME:-local}/adas-backend:latest
+
+    build:
+    # this means build image from current folder 
+    # similar to docker build -f Dockerfile.backend .
+      context: . # means use the current project folder as the build context (agentic-adas)
+      dockerfile: Dockerfile.backend
+    
+    ports:
+      - "8000:8000"
+    
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    
+    healthcheck:
+    # checks if backend is alive 
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    restart: unless-stopped # auto-restart if container crashes 
+
+  frontend:
+    image: ${DOCKER_USERNAME:-$local}/adas-frontend:latest
+
+    build:
+      context: .
+      dockerfile: .frontend
+    
+    ports:
+      - "8501:8501"
+    
+    environment:
+      - BACKEND_URL=http://backend:8000
+    
+    depends_on:
+      backend:
+        condition: service_healthy

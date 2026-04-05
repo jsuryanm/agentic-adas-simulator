@@ -1,2 +1,27 @@
 FROM python:3.12-slim
 
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    libgl1 \
+    libglib2.0-0 \
+    ffmpeg \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# installs uv pacakge manager and copies uv,uvx into bin folder
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /uvx /bin/
+
+COPY pyproject.toml uv.lock ./
+
+RUN uv sync --frozen --no-dev
+
+# copies code from src to apps folder(docker image)
+COPY src/ ./src/ 
+
+COPY backend/ ./backend/
+
+EXPOSE 8000
+
+ENV PYTHONUNBUFFERED=1
+
+CMD ["uv","run","uvicorn","backend.app:app","--reload","--host","0.0.0.0","--port","8000"]
