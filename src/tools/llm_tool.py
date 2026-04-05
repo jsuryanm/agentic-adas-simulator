@@ -34,7 +34,7 @@ class LLMTool:
         
         return self._llm 
     
-    def _get_chain(self):
+    def _get_scene_chain(self):
         """Lazy load chain"""
 
         if self._scene_chain is not None:
