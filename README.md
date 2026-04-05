@@ -381,25 +381,21 @@ The policy mapping is deterministic and never overridden by the LLM. When LLM re
 
 ## Design Decisions
 
-### Why agents + tools instead of a monolith?
+### Agents 
 
 Agents are orchestrators; tools are executors. The Perception Agent doesn't contain YOLO inference logic — it calls `DetectionTool.detect()`. This means you can swap `DetectionTool` for a different detector (DETR, RT-DETR, a cloud API) without touching the agent. The same separation applies everywhere: `RiskTool` contains the scoring math, `LLMTool` wraps the LangChain chains, and agents only decide *when* and *how* to call them.
 
-### Why rule-based risk + optional LLM, not pure LLM?
+### Rule-based risk + optional LLM reasoning 
 
 Safety-critical decisions need deterministic guarantees. The rule-based risk scoring always runs and produces a predictable baseline. The LLM layer is additive — it can catch cross-factor interactions the rules miss (a near pedestrian + lane drift is worse than either alone), but it can only **escalate** risk, never lower it. If the LLM fails, the system still produces a valid decision. This "rules as floor, LLM as ceiling" pattern is common in production safety systems.
 
-### Why LangGraph state instead of direct function calls?
+### LangGraph state
 
 LangGraph's `TypedDict` state provides a shared blackboard that each agent reads from and writes to. This gives you built-in traceability (every state mutation is visible), testability (inject any state and run a single agent), and the ability to add conditional routing or parallel execution later without refactoring. All values stored in state are plain dicts (schemas call `.to_dict()` / `.model_dump()` before writing) to keep state JSON-serializable.
 
-### Why time-based video sampling?
+### Time-based video sampling
 
 Frame-count–based sampling (every Nth frame) produces inconsistent temporal coverage across videos with different framerates. A 30fps clip sampled every 30 frames gives 1 sample/second; a 24fps clip sampled the same way gives 1.25 samples/second. Time-based sampling (`SECONDS_PER_SAMPLE = 1.0`) ensures consistent temporal coverage regardless of the source video's framerate.
-
-### Why a custom exception hierarchy?
-
-Every layer has its own exception class inheriting from `ADASBaseException`. This makes error handling precise — the pipeline can catch `PerceptionAgentException` specifically, log the appropriate context, and decide whether to fail the frame or substitute defaults. It also makes debugging straightforward: the exception type immediately tells you which layer failed.
 
 ---
 
