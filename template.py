@@ -32,8 +32,6 @@ list_of_files = [
     "src/exceptions/custom_exceptions.py",
     "src/logger/__init__.py",
     "src/logger/custom_logger.py",
-    "src/mcp_server/__init__.py",
-    "src/mcp_server/server.py",
     "src/core/__init__.py",
     "src/core/config.py",
     "backend/__init__.py",
