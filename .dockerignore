@@ -2,7 +2,8 @@
 .git
 .gitignore
 .gitattributes
-
+.github
+.claude
 
 # CI
 .codeclimate.yml

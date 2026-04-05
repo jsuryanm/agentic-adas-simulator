@@ -9,7 +9,7 @@ from src.core.config import settings
 from src.tools.video_tool import annotate_image
 
 
-API_URL = "http://localhost:8000"
+API_URL = os.getenv("BACKEND_URL","http://localhost:8000")
 
 st.set_page_config(
     page_title="Agentic ADAS Simulator",
@@ -351,7 +351,7 @@ elif input_mode == "Video":
 
             st.divider()
 
-            # ── Summary metrics ───────────────────────────────────────
+            # Summary metrics 
             decisions = [f.get("decision", {}).get("decision_type", "SAFE") for f in frames]
             worst = max(decisions, key=lambda d: DECISION_ORDER.get(d, 0), default="SAFE")
 
@@ -361,14 +361,14 @@ elif input_mode == "Video":
             m3.metric("Critical Frames", decisions.count("CRITICAL"))
             m4.metric("Warning Frames", decisions.count("WARNING"))
 
-            # ── Annotated output video ────────────────────────────────
+            #  Annotated output video 
             if output_video_path:
                 local_video = api_download_video(os.path.basename(output_video_path))
                 if local_video:
                     st.subheader("Annotated Output Video")
                     st.video(local_video)
 
-            # ── Decision timeline ─────────────────────────────────────
+            # Decision timeline 
             st.subheader("Decision Timeline")
 
             color_map = {
@@ -394,7 +394,7 @@ elif input_mode == "Video":
                 "🟢 SAFE  🔵 ADVISORY  🟠 WARNING  🔴 CRITICAL"
             )
 
-            # ── Frame inspector ───────────────────────────────────────
+            #  Frame inspector 
             if frames:
                 st.divider()
                 st.subheader("Frame Inspector")

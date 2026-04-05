@@ -10,7 +10,7 @@ python-multipart
 pydantic-settings 
 pydantic 
 loguru
-opencv-python
+opencv-python-headless
 python-dotenv
 pytest
 torch 

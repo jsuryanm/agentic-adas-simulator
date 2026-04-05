@@ -28,6 +28,7 @@ dependencies = [
     "huggingface-hub[hf-xet]>=1.8.0",
     "numpy>=2.4.3",
     "streamlit>=1.56.0",
+    "opencv-python-headless>=4.13.0.92",
 ]
 
 [[tool.uv.index]]
