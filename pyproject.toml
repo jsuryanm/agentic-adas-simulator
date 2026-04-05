@@ -13,7 +13,6 @@ dependencies = [
     "loguru>=0.7.3",
     "mcp[cli]>=1.26.0",
     "openai>=2.30.0",
-    "opencv-python>=4.13.0.92",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.13.1",
     "python-dotenv>=1.2.2",
