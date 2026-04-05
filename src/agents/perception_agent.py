@@ -26,7 +26,7 @@ class PerceptionAgent(BaseAgent):
 
         detected,(img_w,img_h) = self.detection_tool.detect(image_path)
         detected_dicts = [obj.model_dump() for obj in detected]
-
+        
         if self.depth_tool is not None and detected_dicts:
             depth_map = self.depth_tool.estimate(image_path)
             detected_dicts = self.depth_tool.enrich_detections(detected_dicts,depth_map,(img_w,img_h))

@@ -35,7 +35,7 @@ class LLMTool:
         return self._llm 
     
     def _get_scene_chain(self):
-        """Lazy load chain"""
+        """Lazy load scene chain"""
 
         if self._scene_chain is not None:
             return self._scene_chain
@@ -139,7 +139,7 @@ class LLMTool:
         prompt = ChatPromptTemplate.from_messages([
             (
                 "system",
-                "You are the reasoning module inside an ADAS Risk Assessment Agent. "
+                "You are the reasoning module inside an ADAS (Advanced Driver Assistance Systems) Risk Assessment Agent. "
                 "You receive a rule-based risk report, the scene summary, and raw detections. "
                 "The rules score collision, pedestrian, and lane risk independently — "
                 "but they CANNOT cross-reference factors.\n\n"
@@ -275,7 +275,7 @@ class LLMTool:
         prompt = ChatPromptTemplate.from_messages([
             (
                 "system",
-                "You are the reasoning module inside an ADAS Decision Agent. "
+                "You are the reasoning module inside an ADAS (Advanced Driver Assistance Systems) Decision Agent. "
                 "You receive the full pipeline context: detections, scene summary, "
                 "risk report, and a baseline decision from policy rules.\n\n"
                 "Your job:\n"

@@ -18,3 +18,4 @@ torchvision
 transformers
 huggingface_hub[hf_xet]
 numpy
+streamlit
