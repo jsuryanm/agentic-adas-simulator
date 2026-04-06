@@ -1,0 +1,136 @@
+# name of this workflow
+name: ADAS Simulator CICD 
+
+# on defines the events that trigger the workflows execution
+# in this the pipeline is triggered when we push to main, open pr, manually trigger
+on:
+  push:
+    branches: ["main"]
+  
+  pull_request:
+    branches: ["main"]
+  
+  # workflow dispatch event allows you to manually trigger a workflow through github ui,cli or RESTAPI
+  workflow_dispatch:
+
+# Global Environment variables - shared across all jobs 
+env:
+  AWS_REGION: ${{ secrets.AWS_REGION }}
+ 
+# jobs are primary organizational units of workflow
+# Each job is a collection of steps(eg. shell scripts) 
+# that execute on same runner providing isolated environment
+
+jobs:
+
+  # job 1 (test)
+  # Runs on every push and pr 
+  # install dependencies and runs pytest
+
+  test: # defines job called test (we can call it anything we want)
+    runs-on: ubuntu-latest # (githubs linux runner)
+    steps:
+      - uses: actions/checkout@v4 # downloads the repo code
+
+      - name: Install uv  # names are labels 
+        uses: astral-sh/setup-uv@v4 
+      
+      - name: Install dependencies 
+        run: uv sync --frozen # runner installs packages exactly from uv.lock
+      
+      - name: Run tests 
+      # inject github secret into this step
+        env: 
+          OPENAI_API_KEY: ${{secrets.OPENAI_API_KEY}}
+        
+        run: uv run pytest tests/ -v # runner runs the pytest on test folder
+
+  # job2 (build and push to ecr)
+  build-and-push: 
+    needs: test # makes jobs run sequentially 
+    runs-on: ubuntu-latest
+
+    # condition for running only if event=push and branch=main
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # authenticate with AWS - uses IAM user credentials 
+      - name: Configure AWS credentials
+
+        uses: aws-actions/configure-aws-credentials@v4  
+        # logs GitHub runner into AWS
+        with:
+          aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+          aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+          aws-region: ${{secrets.AWS_REGION}}
+         
+        # Login to AWS ECR - gets temporary docker auth token
+      - name: Login to Amazon ECR
+        # This gives this step a reference name
+        # Allows later steps to use its outputs
+        id: login-ecr 
+        uses: aws-actions/amazon-ecr-login@v2 
+        # performs docker login AWS ECR
+        # enables docker to push images
+
+      - name: Build and push backend to ECR
+        env: 
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }} # uses commit hash for allowing version tracking 
+        
+        run: |
+          docker build -f Dockerfile.backend \
+          -t $ECR_REGISTRY/${{ secrets.AWS_BACKEND_REPO }}:latest \
+          -t $ECR_REGISTRY/${{ secrets.AWS_BACKEND_REPO }}:$IMAGE_TAG .
+
+          docker push $ECR_REGISTRY/${{ secrets.AWS_BACKEND_REPO }}:latest
+          docker push $ECR_REGISTRY/${{ secrets.AWS_BACKEND_REPO }}:$IMAGE_TAG
+
+      - name: Build and push frontend to ECR
+        env: 
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          IMAGE_TAG: ${{ github.sha }} # uses commit hash for allowing version tracking 
+        
+        run: |
+          docker build -f Dockerfile.frontend \
+          -t $ECR_REGISTRY/${{ secrets.AWS_FRONTEND_REPO }}:latest \
+          -t $ECR_REGISTRY/${{ secrets.AWS_FRONTEND_REPO }}:$IMAGE_TAG .
+
+          docker push $ECR_REGISTRY/${{ secrets.AWS_FRONTEND_REPO }}:latest
+          docker push $ECR_REGISTRY/${{ secrets.AWS_FRONTEND_REPO }}:$IMAGE_TAG
+
+  # job-3: Deploy to EC2 
+  deploy: 
+    needs: build-and-push
+    runs-on: self-hosted # EC2 registered as github actions runner
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v4 # downloads code to ec2 
+      
+      - name: Login to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | \
+          docker login --username AWS --password-stdin \
+          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+      
+      - name: Deploy containers 
+        run: |
+          cd ${{ github.workspace }}
+          
+          echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" > .env
+          echo "AWS_REGION=${{ secrets.AWS_REGION }}" >> .env
+          echo "AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}" >> .env
+          echo "AWS_BACKEND_REPO=${{ secrets.AWS_BACKEND_REPO }}" >> .env
+          echo "AWS_FRONTEND_REPO=${{ secrets.AWS_FRONTEND_REPO }}" >> .env
+
+          docker compose -f docker-compose.ecr.yml pull
+
+          docker compose -f docker-compose.ecr.yml up -d --remove-orphans
+
+          docker image prune -f
+
+
+      

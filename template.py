@@ -38,14 +38,15 @@ list_of_files = [
     "backend/__init__.py",
     "backend/app.py",
     "dashboard/__init__.py",
-    "dashboard/app.py",
+    "dashboard/streamlit_app.py",
     "tests/__init__.py",
     "tests/test_pipeline.py",
     "requirements.txt",
     ".dockerignore",
     "Dockerfile.frontend",
     "Dockerfile.backend",
-    "docker-compose.yml",
+    "docker-compose.dev.yml",
+    "docker-compose.ecr.yml",
     ".env",]
 
 

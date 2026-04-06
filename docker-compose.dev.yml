@@ -1,18 +1,19 @@
 services:
-# services are containers
+# services are containers (Start multiple containers toghether)
   
   backend:
     # DOCKER_USERNAME is an env_var otherwise if set it we can use or it will appear as local/adas-backend:latest
     image: ${DOCKER_USERNAME}/adas-backend:latest
 
     build:
-    # this means build image from current folder 
+    # this means build image from current folder using Dockerfile.backend
     # similar to docker build -f Dockerfile.backend .
       context: . # means use the current project folder as the build context (agentic-adas)
       dockerfile: Dockerfile.backend
     
     ports:
-      - "8000:8000"
+      - "8000:8000" 
+      # Mapping host port : container port
     
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
