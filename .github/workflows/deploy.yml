@@ -109,6 +109,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4 # downloads code to ec2 
+
+      - name: Install AWS CLI
+        run: |
+          if ! command -v aws &> /dev/null; then
+            sudo apt update && sudo apt install -y awscli
+          fi
       
       - name: Login to Amazon ECR
         run: |
