@@ -7,7 +7,7 @@ import cv2
 from src.core.config import settings
 from src.models.schemas import LaneAnalysis
 from src.exceptions.custom_exceptions import LaneToolException, ImageLoadException
-from loguru import logger
+from src.logger.custom_logger import logger 
 
 
 class LaneToolCV:

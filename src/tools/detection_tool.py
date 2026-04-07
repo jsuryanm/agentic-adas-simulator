@@ -1,6 +1,6 @@
 from typing import List 
 from src.core.config import settings 
-from loguru import logger 
+from src.logger.custom_logger import logger 
 
 from src.models.schemas import DetectedObject
 from src.exceptions.custom_exceptions import DetectionToolException,ImageLoadException

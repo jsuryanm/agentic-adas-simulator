@@ -1,6 +1,7 @@
 from src.models.schemas import RiskReport,RiskLevel,LaneStatus
 from src.exceptions.custom_exceptions import RiskToolException
-from loguru import logger 
+
+from src.logger.custom_logger import logger 
 from pprint import pprint
 
 

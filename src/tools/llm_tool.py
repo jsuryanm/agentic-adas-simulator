@@ -1,5 +1,4 @@
 import json 
-from loguru import logger 
 from pprint import pprint
 
 from langchain_openai import ChatOpenAI
@@ -8,6 +7,8 @@ from langchain_core.output_parsers import JsonOutputParser
 
 from src.core.config import settings 
 from src.exceptions.custom_exceptions import LLMToolException
+from src.logger.custom_logger import logger 
+
 
 class LLMTool:
     """Generates a short human-readable narration of the scene."""

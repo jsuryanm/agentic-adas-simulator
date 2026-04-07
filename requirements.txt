@@ -1,11 +1,9 @@
 langgraph 
 langchain
 langchain-openai
-openai 
 fastapi
 uvicorn[standard]
 ultralytics
-mcp[cli]
 python-multipart 
 pydantic-settings 
 pydantic 
@@ -17,5 +15,4 @@ torch
 torchvision
 transformers
 huggingface_hub[hf_xet]
-numpy
 streamlit

@@ -6,7 +6,7 @@ import subprocess
 
 import cv2
 import numpy as np
-from loguru import logger
+from src.logger.custom_logger import logger 
 
 from src.core.config import settings
 from src.pipelines.graph import run_pipeline

@@ -1,9 +1,9 @@
 from typing import List,Optional 
-from loguru import logger 
 from pprint import pprint
 
 from src.models.schemas import SceneSummary,LaneAnalysis,LaneStatus
 from src.exceptions.custom_exceptions import SceneToolException
+from src.logger.custom_logger import logger 
 
 class SceneTool:
 

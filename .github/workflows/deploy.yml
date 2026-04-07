@@ -30,7 +30,7 @@ jobs:
   test: # defines job called test (we can call it anything we want)
     runs-on: ubuntu-latest # (githubs linux runner)
     steps:
-      - uses: actions/checkout@v4 # downloads the repo code
+      - uses: actions/checkout@v4 # downloads the repo code to github actions runner
 
       - name: Install uv  # names are labels 
         uses: astral-sh/setup-uv@v4 
@@ -100,7 +100,8 @@ jobs:
 
           docker push $ECR_REGISTRY/${{ secrets.AWS_FRONTEND_REPO }}:latest
           docker push $ECR_REGISTRY/${{ secrets.AWS_FRONTEND_REPO }}:$IMAGE_TAG
-
+          
+  # Note each job runs on a different machine and these machines wont share credentials
   # job-3: Deploy to EC2 
   deploy: 
     needs: build-and-push

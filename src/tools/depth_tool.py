@@ -11,7 +11,7 @@ from transformers import AutoImageProcessor,AutoModelForDepthEstimation
 from src.tools.detection_tool import DetectionTool
 from src.core.config import settings 
 from src.exceptions.custom_exceptions import DepthToolException,ImageLoadException
-from loguru import logger 
+from src.logger.custom_logger import logger 
 
 class DepthTool:
     """

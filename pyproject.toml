@@ -11,32 +11,21 @@ dependencies = [
     "langchain-openai>=1.1.12",
     "langgraph>=1.1.4",
     "loguru>=0.7.3",
-    "mcp[cli]>=1.26.0",
-    "openai>=2.30.0",
     "pydantic>=2.12.5",
     "pydantic-settings>=2.13.1",
     "python-dotenv>=1.2.2",
     "python-multipart>=0.0.22",
     "ultralytics>=8.4.33",
     "uvicorn[standard]>=0.42.0",
-    # PyTorch CUDA
     "torch",
     "torchvision",
     "pytest>=9.0.2",
     "transformers>=5.5.0",
     "huggingface-hub[hf-xet]>=1.8.0",
-    "numpy>=2.4.3",
     "streamlit>=1.56.0",
     "opencv-python-headless>=4.13.0.92",
 ]
 
-[[tool.uv.index]]
-name = "pytorch"
-url = "https://download.pytorch.org/whl/cu128"
-
-[tool.uv.sources]
-torch = { index = "pytorch" }
-torchvision = { index = "pytorch" }
 
 [tool.setuptools.packages.find]
 where = ["."]
