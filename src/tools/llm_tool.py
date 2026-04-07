@@ -99,7 +99,7 @@ class LLMTool:
             result = {"context_notes":parsed.get("context_notes",[]),
                       "narration": parsed.get("narration",[])}
             
-            logger.info(f"Scene reasoning: {len(result["context_notes"])} insights generated")
+            logger.info(f"Scene reasoning: {len(result['context_notes'])} insights generated")
             return result 
         
         except LLMToolException:

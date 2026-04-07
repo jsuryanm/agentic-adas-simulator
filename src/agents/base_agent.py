@@ -1,6 +1,6 @@
 import time 
 from abc import ABC,abstractmethod
-from loguru import logger 
+from src.logger.custom_logger import logger
 
 from src.pipelines.state import ADASState
 
@@ -22,7 +22,7 @@ class BaseAgent(ABC):
 
         Returns a dict of state field updates.
         """
-        self.logger.info(f"{self.name} starting (frame {state.get("frame_number","?")})")
+        self.logger.info(f"{self.name} starting (frame {state.get('frame_number','?')})")
         start = time.time()
 
         try:

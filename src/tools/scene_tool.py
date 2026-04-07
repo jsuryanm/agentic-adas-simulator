@@ -116,7 +116,7 @@ class SceneTool:
 
         # lead vehicle warning 
         if lead and lead.get("distance") == "near":
-            notes.append(f"Lead {lead.get("label","vehicle")} is close at range (confidence: {lead.get("confidence",0):.0%})")
+            notes.append(f"Lead {lead.get('label','vehicle')} is close at range (confidence: {lead.get("confidence",0):.0%})")
 
 
         # pedestrian alert

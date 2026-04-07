@@ -48,7 +48,7 @@ class SceneAgent(BaseAgent):
             self.logger.warning(f"LLM scene reasoning failed: {e}")
             summary_dict["llm_narration"] = ""
         
-        self.logger.info(f"Scene analysis complete: traffic = {summary_dict.get("traffic_density")} lane = {summary_dict.get("lane_status")}")
+        self.logger.info(f"Scene analysis complete: traffic = {summary_dict.get('traffic_density')} lane = {summary_dict.get('lane_status')}")
         
         return {"scene_summary":summary_dict,
                 "lane_analysis":lane_analysis_dict}
