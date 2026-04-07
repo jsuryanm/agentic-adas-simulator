@@ -57,7 +57,7 @@ class LLMTool:
                 "Respond ONLY with a JSON object — no markdown, no backticks:\n"
                 '{{\n'
                 '  "context_notes": ["<insight 1>", "<insight 2>"],\n'
-                '  "narration": "<2-3 sentence driver-perspective summary>"\n'
+                '  "narration": "<2 sentence driver-perspective summary>"\n'
                 '}}',
             ),
             (
@@ -68,7 +68,7 @@ class LLMTool:
                 "Provide your contextual reasoning:",
             )
         ])
-        
+    
         self._scene_chain = prompt | llm | JsonOutputParser()
         logger.info("Scene reasoning chain built")
         return self._scene_chain
@@ -162,7 +162,7 @@ class LLMTool:
                 '  "lane_risk": "<low|medium|high|critical>",\n'
                 '  "composite_risk": "<low|medium|high|critical>",\n'
                 '  "adjustments_made": ["<what you changed and why>"],\n'
-                '  "explanation": "<2-3 sentence reasoning covering all factors>"\n'
+                '  "explanation": "<2 sentence reasoning covering all factors>"\n'
                 '}}',
             ),
             (
